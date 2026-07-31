@@ -2,32 +2,68 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import PageIntro from '../components/PageIntro'
 import { contactSubjects, initialContactForm, type ContactFormErrors, type ContactFormState } from '../data/contactData'
+import { ApiRequestError, submitContactMessage } from '../services/api'
 import { validateContactForm } from '../utils/contactValidation'
 
 function Contact() {
   const [form, setForm] = useState<ContactFormState>(initialContactForm)
   const [errors, setErrors] = useState<ContactFormErrors>({})
   const [successMessage, setSuccessMessage] = useState('')
+  const [submitError, setSubmitError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   function updateField(field: keyof ContactFormState, value: string) {
     setForm((current) => ({ ...current, [field]: value }))
     setErrors((current) => ({ ...current, [field]: undefined }))
     setSuccessMessage('')
+    setSubmitError('')
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+
+    if (isSubmitting) {
+      return
+    }
 
     const nextErrors = validateContactForm(form)
     setErrors(nextErrors)
 
     if (Object.keys(nextErrors).length > 0) {
       setSuccessMessage('')
+      setSubmitError('')
       return
     }
 
-    setSuccessMessage('Message saved locally for now. Backend connection will be added later.')
-    setForm(initialContactForm)
+    const subject = form.subject
+    if (!subject) {
+      return
+    }
+
+    setIsSubmitting(true)
+    setSuccessMessage('')
+    setSubmitError('')
+
+    try {
+      const response = await submitContactMessage({
+        name: form.name,
+        email: form.email,
+        subject,
+        message: form.message,
+      })
+
+      setSuccessMessage(response.message)
+      setForm(initialContactForm)
+      setErrors({})
+    } catch (error) {
+      if (error instanceof ApiRequestError && Object.keys(error.fieldErrors).length > 0) {
+        setErrors(mapApiErrors(error.fieldErrors))
+      } else {
+        setSubmitError('Message could not be sent. Please try again.')
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -35,7 +71,7 @@ function Contact() {
       <PageIntro
         eyebrow="Contact"
         title="Send feedback, questions or accessibility notes."
-        description="This form is static for now. It validates in the browser and is ready to connect to a Django API later."
+        description="Send accessibility feedback, bug reports, feature ideas or general questions to the VisionUp team."
       />
 
       <form className="contact-form" noValidate onSubmit={handleSubmit}>
@@ -79,8 +115,8 @@ function Contact() {
           >
             <option value="">Select a subject</option>
             {contactSubjects.map((subject) => (
-              <option key={subject} value={subject}>
-                {subject}
+              <option key={subject.value} value={subject.value}>
+                {subject.label}
               </option>
             ))}
           </select>
@@ -101,9 +137,15 @@ function Contact() {
           {errors.message && <p className="field-error" id="message-error">{errors.message}</p>}
         </div>
 
-        <button className="send-button" type="submit">
-          Send Message
+        <button className="send-button" disabled={isSubmitting} type="submit">
+          {isSubmitting ? 'Sending...' : 'Send Message'}
         </button>
+
+        {submitError && (
+          <p className="error-message" role="alert">
+            {submitError}
+          </p>
+        )}
 
         {successMessage && (
           <p className="success-message" role="status">
@@ -113,6 +155,13 @@ function Contact() {
       </form>
     </main>
   )
+}
+
+function mapApiErrors(fieldErrors: ApiRequestError['fieldErrors']): ContactFormErrors {
+  return Object.entries(fieldErrors).reduce<ContactFormErrors>((errors, [field, messages]) => {
+    errors[field as keyof ContactFormState] = messages?.join(' ')
+    return errors
+  }, {})
 }
 
 export default Contact

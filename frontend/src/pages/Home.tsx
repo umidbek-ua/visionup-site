@@ -1,7 +1,54 @@
+import { useEffect, useState } from 'react'
 import DownloadButton from '../components/DownloadButton'
-import { screenshots } from '../data/siteData'
+import { downloadInfo, screenshots } from '../data/siteData'
+import { getLatestRelease, type LatestRelease } from '../services/api'
 
 function Home() {
+  const [release, setRelease] = useState<LatestRelease | null>(null)
+  const [isLoadingRelease, setIsLoadingRelease] = useState(true)
+  const [releaseError, setReleaseError] = useState('')
+
+  useEffect(() => {
+    let isCurrent = true
+
+    async function loadRelease() {
+      setIsLoadingRelease(true)
+      setReleaseError('')
+
+      try {
+        const latestRelease = await getLatestRelease()
+
+        if (isCurrent) {
+          setRelease(latestRelease)
+        }
+      } catch {
+        if (isCurrent) {
+          setRelease(null)
+          setReleaseError('Download is temporarily unavailable.')
+        }
+      } finally {
+        if (isCurrent) {
+          setIsLoadingRelease(false)
+        }
+      }
+    }
+
+    loadRelease()
+
+    return () => {
+      isCurrent = false
+    }
+  }, [])
+
+  const releaseMeta = release
+    ? [
+        `Version ${release.version}`,
+        release.platform,
+        release.architecture,
+        release.file_size,
+      ].filter(Boolean)
+    : downloadInfo.meta
+
   return (
     <main id="home" className="home-page">
       <section className="intro-section" aria-labelledby="home-title">
@@ -23,7 +70,12 @@ function Home() {
         ))}
       </section>
 
-      <DownloadButton />
+      <DownloadButton
+        downloadUrl={release?.download_url}
+        errorMessage={releaseError}
+        isLoading={isLoadingRelease}
+        meta={releaseMeta}
+      />
     </main>
   )
 }
