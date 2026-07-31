@@ -1,10 +1,12 @@
+import { downloadInfo } from '../data/siteData'
+
 function DownloadButton() {
   return (
     <div className="download-area">
-      <a className="download-button" href="#" aria-label="Download VisionUp for macOS">
-        Download for macOS
+      <a className="download-button" href={downloadInfo.href} aria-label={downloadInfo.label}>
+        {downloadInfo.label}
       </a>
-      <p className="download-meta">Version 0.1 · macOS · Apple Silicon · DMG</p>
+      <p className="download-meta">{downloadInfo.meta.join(' · ')}</p>
     </div>
   )
 }

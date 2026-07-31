@@ -1,54 +1,15 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import PageIntro from '../components/PageIntro'
-
-const subjects = [
-  'General Question',
-  'Bug Report',
-  'Feature Request',
-  'Accessibility Feedback',
-]
-
-const initialForm = {
-  name: '',
-  email: '',
-  subject: '',
-  message: '',
-}
-
-type FormState = typeof initialForm
-type FormErrors = Partial<Record<keyof FormState, string>>
-
-function validateForm(form: FormState) {
-  const errors: FormErrors = {}
-
-  if (!form.name.trim()) {
-    errors.name = 'Name is required.'
-  }
-
-  if (!form.email.trim()) {
-    errors.email = 'Email is required.'
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-    errors.email = 'Enter a valid email address.'
-  }
-
-  if (!form.subject) {
-    errors.subject = 'Subject is required.'
-  }
-
-  if (!form.message.trim()) {
-    errors.message = 'Message is required.'
-  }
-
-  return errors
-}
+import { contactSubjects, initialContactForm, type ContactFormErrors, type ContactFormState } from '../data/contactData'
+import { validateContactForm } from '../utils/contactValidation'
 
 function Contact() {
-  const [form, setForm] = useState<FormState>(initialForm)
-  const [errors, setErrors] = useState<FormErrors>({})
+  const [form, setForm] = useState<ContactFormState>(initialContactForm)
+  const [errors, setErrors] = useState<ContactFormErrors>({})
   const [successMessage, setSuccessMessage] = useState('')
 
-  function updateField(field: keyof FormState, value: string) {
+  function updateField(field: keyof ContactFormState, value: string) {
     setForm((current) => ({ ...current, [field]: value }))
     setErrors((current) => ({ ...current, [field]: undefined }))
     setSuccessMessage('')
@@ -57,7 +18,7 @@ function Contact() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    const nextErrors = validateForm(form)
+    const nextErrors = validateContactForm(form)
     setErrors(nextErrors)
 
     if (Object.keys(nextErrors).length > 0) {
@@ -66,7 +27,7 @@ function Contact() {
     }
 
     setSuccessMessage('Message saved locally for now. Backend connection will be added later.')
-    setForm(initialForm)
+    setForm(initialContactForm)
   }
 
   return (
@@ -117,7 +78,7 @@ function Contact() {
             value={form.subject}
           >
             <option value="">Select a subject</option>
-            {subjects.map((subject) => (
+            {contactSubjects.map((subject) => (
               <option key={subject} value={subject}>
                 {subject}
               </option>

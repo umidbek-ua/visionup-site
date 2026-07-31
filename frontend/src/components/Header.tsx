@@ -1,7 +1,7 @@
-const navigationItems = ['Home', 'Guide', 'About', 'Contact']
+import { navigationItems, type Page } from '../data/siteData'
 
 type HeaderProps = {
-  currentPage: string
+  currentPage: Page
 }
 
 function Header({ currentPage }: HeaderProps) {
@@ -16,11 +16,11 @@ function Header({ currentPage }: HeaderProps) {
       <nav className="site-nav" aria-label="Main navigation">
         {navigationItems.map((item) => (
           <a
-            aria-current={currentPage === item.toLowerCase() ? 'page' : undefined}
-            key={item}
-            href={`#${item.toLowerCase()}`}
+            aria-current={currentPage === item.page ? 'page' : undefined}
+            key={item.page}
+            href={`#${item.page}`}
           >
-            {item}
+            {item.label}
           </a>
         ))}
       </nav>

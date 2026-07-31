@@ -1,32 +1,66 @@
-# React + TypeScript + Vite
+# VisionUp Site Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+VisionUp Site is the static frontend for the VisionUp accessibility project.
+Its purpose is to present the desktop app, explain how it helps low-vision
+users, and prepare the website UI for a later Django backend integration.
 
-Currently, two official plugins are available:
+## Pages
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Home
+- Guide
+- About
+- Contact
 
-## React Compiler
+## Frontend Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- TypeScript
+- Vite
+- Oxlint
+- CSS modules are not used; shared styling lives in `src/App.css` and global
+  tokens live in `src/index.css`.
 
-## Expanding the Oxlint configuration
+## Install
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Run
+
+```bash
+npm run dev
+```
+
+## Build
+
+```bash
+npm run build
+```
+
+## Lint
+
+```bash
+npm run lint
+```
+
+## v0.1 Current Status
+
+The v0.1 frontend includes a static Home page, Guide page, About page, and
+Contact page. The UI uses a dark, high-contrast style with large controls,
+visible focus states, reusable components, and hash-based navigation.
+
+The backend integration has not been implemented yet. There is no Django API,
+database connection, email sending, or download backend logic in this frontend
+version.
+
+## Placeholders
+
+- Screenshots are loaded from `image/visionup1.png`, `image/visionup2.png`, and
+  `image/visionup3.png`. Replace those files with real app screenshots later.
+- Download configuration is stored in `src/data/siteData.ts`. The current
+  download URL is a placeholder.
+- Contact form validation works in the browser, but form submission is static.
+  The API request should be added later in `src/pages/Contact.tsx`.
+- Guide content is stored in `src/data/guideData.ts` so real product details and
+  keyboard shortcuts can be updated without changing layout code.

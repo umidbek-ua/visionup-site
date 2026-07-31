@@ -42,9 +42,50 @@ body {
   min-height: 100svh;
   margin: 0;
   background:
+    linear-gradient(115deg, transparent 0 22%, rgba(56, 189, 248, 0.08) 22.2% 22.6%, transparent 22.8% 100%),
+    linear-gradient(64deg, transparent 0 58%, rgba(74, 222, 128, 0.07) 58.2% 58.6%, transparent 58.8% 100%),
+    linear-gradient(rgba(125, 211, 252, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(125, 211, 252, 0.035) 1px, transparent 1px),
     radial-gradient(circle at 18% 0%, rgba(125, 211, 252, 0.14), transparent 32%),
+    radial-gradient(circle at 82% 18%, rgba(74, 222, 128, 0.09), transparent 28%),
+    radial-gradient(circle at 50% 100%, rgba(37, 99, 235, 0.16), transparent 38%),
     linear-gradient(180deg, rgba(11, 18, 32, 0.96), var(--bg) 48%),
     var(--bg);
+  background-attachment: fixed;
+  background-position:
+    center,
+    center,
+    0 0,
+    0 0,
+    center,
+    center,
+    center,
+    center;
+  background-size:
+    auto,
+    auto,
+    64px 64px,
+    64px 64px,
+    auto,
+    auto,
+    auto,
+    auto;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, transparent 10%, rgba(125, 211, 252, 0.16) 10.2%, transparent 10.6%),
+    linear-gradient(135deg, transparent 33%, rgba(125, 211, 252, 0.1) 33.2%, transparent 33.6%),
+    linear-gradient(135deg, transparent 73%, rgba(74, 222, 128, 0.1) 73.2%, transparent 73.55%),
+    radial-gradient(circle at 28% 30%, rgba(125, 211, 252, 0.12) 0 2px, transparent 3px),
+    radial-gradient(circle at 64% 42%, rgba(74, 222, 128, 0.1) 0 2px, transparent 3px),
+    radial-gradient(circle at 78% 76%, rgba(125, 211, 252, 0.1) 0 2px, transparent 3px);
+  opacity: 0.85;
 }
 
 button,
