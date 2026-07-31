@@ -1,6 +1,10 @@
 const navigationItems = ['Home', 'Guide', 'About', 'Contact']
 
-function Header() {
+type HeaderProps = {
+  currentPage: string
+}
+
+function Header({ currentPage }: HeaderProps) {
   return (
     <header className="site-header">
       <a className="text-logo" href="#home" aria-label="VisionUp home">
@@ -11,7 +15,11 @@ function Header() {
       </a>
       <nav className="site-nav" aria-label="Main navigation">
         {navigationItems.map((item) => (
-          <a key={item} href={`#${item.toLowerCase()}`}>
+          <a
+            aria-current={currentPage === item.toLowerCase() ? 'page' : undefined}
+            key={item}
+            href={`#${item.toLowerCase()}`}
+          >
             {item}
           </a>
         ))}
